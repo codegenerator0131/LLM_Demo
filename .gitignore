@@ -40,5 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-#Livekit dependencies
-/livekit
+# Livekit dependencies
+/livekit/LICENSE
+/livekit/livekit-server.exe
