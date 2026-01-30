@@ -388,7 +388,7 @@ export default function ChatSessionUI({
         totalAttempts.current++;
         // This is CPU heavy!
         const detections = await faceapi
-          .detectSingleFace(videoRef.current, options2)
+          .detectSingleFace(videoRef.current, options1)
           .withFaceLandmarks()
           .withFaceExpressions();
         // console.log(detections);

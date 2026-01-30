@@ -144,7 +144,8 @@ export default defineAgent({
         } catch (e) {}
       } else {
         session.say(
-          `Hi ${sessionData.userName}, I am ${sessionData.botName}. My goal for this session is ${sessionData.goal}. Shall we begin?`
+          `Hi ${sessionData.userName}, I am ${sessionData.botName}. My goal for this session is ${sessionData.goal}. Shall we begin?`,
+          { allowInterruptions: true }
         );
       }
     };
@@ -162,7 +163,7 @@ export default defineAgent({
       session.output.setTranscriptionEnabled(false);
       isActive = false;
 
-      session.say("Pausing now.", { allowInterruptions: false });
+      session.say("Pausing now.", { allowInterruptions: true });
     };
 
     // --- COMMAND LISTENER ---
@@ -203,6 +204,27 @@ export default defineAgent({
         reliable: true,
         topic: "agent-metrics", // Specific topic for filtering
       });
+    });
+
+    // --- DISCONNECT LOGIC ---
+    // Detect when the user (Frontend) leaves or refreshes the page
+    ctx.room.on("participantDisconnected", (participant) => {
+      console.log(`Participant ${participant.identity} disconnected.`);
+
+      // Ideally, check if it's the user you are talking to
+      // But for 1-on-1 sessions, if ANYONE leaves, we should probably stop.
+      if (
+        participant.identity === sessionData.userName ||
+        participant.identity !== ctx.agent?.identity
+      ) {
+        console.log(
+          "User disconnected. Shutting down agent session for a fresh start."
+        );
+
+        // This closes the agent's connection to the room.
+        // The Job will end, and a new Job will start when the user returns.
+        ctx.room.disconnect();
+      }
     });
 
     // --- SILENCE LOGIC ---
