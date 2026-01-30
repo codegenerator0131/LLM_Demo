@@ -184,6 +184,15 @@ export default function ChatSessionUI({
   const detectionCount = useRef(0);
   const totalAttempts = useRef(0);
 
+  // 1. Create a reference for the bottom of the list
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 2. Helper function to scroll to the bottom
+  const scrollToBottom = () => {
+    // 'behavior: smooth' gives the animation effect
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   // State Ref for access inside intervals/effects without dependencies
   const stateRef = useRef({
     elapsedSeconds: 0,
@@ -388,7 +397,7 @@ export default function ChatSessionUI({
         totalAttempts.current++;
         // This is CPU heavy!
         const detections = await faceapi
-          .detectSingleFace(videoRef.current, options1)
+          .detectSingleFace(videoRef.current, options2)
           .withFaceLandmarks()
           .withFaceExpressions();
         // console.log(detections);
@@ -438,6 +447,10 @@ export default function ChatSessionUI({
   }, [state, isAgentActive, localParticipant]); // Depends on state changes
 
   const transcriptions = useTranscriptions();
+  useEffect(() => {
+    scrollToBottom();
+  }, [transcriptions]);
+
   return (
     <div className="grid grid-cols-12 gap-6 p-6 h-screen bg-zinc-950 text-white overflow-hidden">
       {/* LEFT COLUMN: USER FOCUS */}
@@ -517,9 +530,10 @@ export default function ChatSessionUI({
           </h2>
 
           {/* 2. Chat Area: Scrollable and Flexible */}
+          {/* 2. Chat Area: Scrollable and Flexible */}
           <div className="flex-1 overflow-y-auto mb-6 pr-2 scroll-smooth custom-scrollbar">
             <div className="flex flex-col items-center min-h-full">
-              {/* Status Indicator */}
+              {/* ... Status Indicator (Unchanged) ... */}
               <div className="h-24 flex items-center justify-center shrink-0">
                 {isAgentActive ? (
                   <div className="flex flex-col items-center">
@@ -541,7 +555,7 @@ export default function ChatSessionUI({
               <div className="w-full space-y-4 mt-8">
                 {transcriptions.map((t) => {
                   const speaker = t.participantInfo.identity;
-                  const isAgent = speaker.toLowerCase().includes("agent"); // Adjust logic based on your speaker IDs
+                  const isAgent = speaker.toLowerCase().includes("agent");
 
                   return (
                     <div
@@ -567,6 +581,9 @@ export default function ChatSessionUI({
                     </div>
                   );
                 })}
+
+                {/* 3. INVISIBLE DIV TO TRACK SCROLL POSITION */}
+                <div ref={messagesEndRef} />
               </div>
             </div>
           </div>
