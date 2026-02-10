@@ -146,6 +146,20 @@ export default function UnifiedChatbot() {
                   }
                 />
               </div>
+              {/* Bot Name Input (Kept as input for flexibility, or change to select if users are fixed) */}
+              <div className="space-y-1">
+                <label className="text-[10px] text-zinc-500 uppercase tracking-widest ml-1 font-bold">
+                  Bot Name
+                </label>
+                <input
+                  className="w-full p-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                  placeholder="Enter bot name"
+                  value={formData.botName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, botName: e.target.value })
+                  }
+                />
+              </div>
               {/* Time based on seconds) */}
               <div className="space-y-1">
                 <label className="text-[10px] text-zinc-500 uppercase tracking-widest ml-1 font-bold">

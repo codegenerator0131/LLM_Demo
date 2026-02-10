@@ -290,7 +290,11 @@ export default function ChatSessionUI({
 
     const payload = {
       type: "START_CHAT",
-      payload: { ...formData, hasCamera },
+      payload: {
+        ...formData,
+        hasCamera,
+        userIdentity: localParticipant.identity,
+      },
     };
     const encoder = new TextEncoder();
     const encoded = encoder.encode(JSON.stringify(payload));
@@ -332,6 +336,7 @@ export default function ChatSessionUI({
         ...formData,
         hasCamera,
         emotions: emotionsStr,
+        userIdentity: localParticipant.identity,
         time_progress: `${formatTime(sec)} / ${formatTime(formData.totalTime)}`,
       },
     };

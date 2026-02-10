@@ -62,10 +62,10 @@ class ContextAwareAgent extends voice.Agent {
     turnCtx: llm.ChatContext,
     _newMessage: llm.ChatMessage
   ): Promise<void> {
-    console.log(
-      ">> [PRE-RESPONSE LOG] Current SessionData:",
-      JSON.stringify(this.sessionData, null, 2)
-    );
+    // console.log(
+    //   ">> [PRE-RESPONSE LOG] Current SessionData:",
+    //   JSON.stringify(this.sessionData, null, 2)
+    // );
 
     let contextMsg = "";
 
@@ -93,15 +93,16 @@ export default defineAgent({
     proc.userData.vad = await silero.VAD.load();
   },
   entry: async (ctx: JobContext) => {
-    console.log("Worker Joined Room");
-    initializeLogger({ pretty: true });
-    await ctx.connect();
+    // console.log("Worker Joined Room");
+    // initializeLogger({ pretty: true });
+    // await ctx.connect();
 
     // Shared Session Data
     const sessionData = {
       role: "Assistant",
       botName: "AI",
       userName: "User",
+      userIdentity: "user-",
       goal: "General Chat",
       emotions: "None",
       visibility: 100,
@@ -127,7 +128,7 @@ export default defineAgent({
 
     const activateAgent = async () => {
       if (isActive) return;
-      console.log(">>> ACTIVATING AGENT (Unmuting)");
+      // console.log(">>> ACTIVATING AGENT (Unmuting)");
       // Enable Listening
       // session.input might be undefined before start(), but we call this after start()
       session.input.setAudioEnabled(true);
@@ -152,7 +153,7 @@ export default defineAgent({
 
     const deactivateAgent = async () => {
       if (!isActive) return;
-      console.log(">>> DEACTIVATING AGENT (Muting)");
+      // console.log(">>> DEACTIVATING AGENT (Muting)");
       // Stop current speech
       session.interrupt();
       isDeactivatedBefore = true;
@@ -187,7 +188,7 @@ export default defineAgent({
             model: model, // must be a valid Deepgram voice
           });
           // Optional confirmation
-          console.log(">>> voice changed to:", model);
+          // console.log(">>> voice changed to:", model);
         }
       } catch (e) {}
     });
@@ -209,17 +210,17 @@ export default defineAgent({
     // --- DISCONNECT LOGIC ---
     // Detect when the user (Frontend) leaves or refreshes the page
     ctx.room.on("participantDisconnected", (participant) => {
-      console.log(`Participant ${participant.identity} disconnected.`);
+      // console.log(`Participant ${participant.identity} disconnected.`);
 
       // Ideally, check if it's the user you are talking to
       // But for 1-on-1 sessions, if ANYONE leaves, we should probably stop.
       if (
-        participant.identity === sessionData.userName ||
+        participant.identity === sessionData.userIdentity ||
         participant.identity !== ctx.agent?.identity
       ) {
-        console.log(
-          "User disconnected. Shutting down agent session for a fresh start."
-        );
+        // console.log(
+        //   "User disconnected. Shutting down agent session for a fresh start."
+        // );
 
         // This closes the agent's connection to the room.
         // The Job will end, and a new Job will start when the user returns.
@@ -253,7 +254,7 @@ export default defineAgent({
 
       const timeSinceLastActivity = Date.now() - lastActivity;
       if (timeSinceLastActivity > 15000) {
-        console.log("Silence detected. Proactively replying.");
+        // console.log("Silence detected. Proactively replying.");
         lastActivity = Date.now();
         try {
           session.generateReply({
@@ -266,7 +267,7 @@ export default defineAgent({
 
     ctx.room.on("disconnected", () => clearInterval(silenceInterval));
 
-    console.log("Agent Ready & Waiting...");
+    // console.log("Agent Ready & Waiting...");
 
     // Start the session
     await session.start({ agent, room: ctx.room });
