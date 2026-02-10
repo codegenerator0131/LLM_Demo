@@ -46,7 +46,7 @@ Windows:
 Download [exe server file](https://github.com/livekit/livekit/releases/latest) then run:
 
 ```bash
-livekit-server.exe
+livekit-server.exe --dev
 ```
 
 also, if you are intrested, you can check [Self hosting](https://docs.livekit.io/transport/self-hosting/) page in livekit documentation or use [Livekit cloud service](https://cloud.livekit.io/login?r=%2F)
